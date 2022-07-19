@@ -8,25 +8,25 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.3
 # Orchestrate or schedule a set of jobs
 
-commands:
+#commands:
   # Exercise: Reusable Job Code
-  print_pipeline_id:
-    parameters:
-      id: 
-        type: string
-    steps:
-      - run: echo << parameters.id >>
+ # print_pipeline_id:
+  #  parameters:
+  #    id: 
+   #     type: string
+   # steps:
+    #  - run: echo << parameters.id >>
 
   # Exercise - Rollback
-  destroy_environment:
-    steps:
-      - run:
-          name: Destroy environment
+  #destroy_environment:
+    #steps:
+      #- run:
+        #  name: Destroy environment
           # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
           # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
-          when: on_fail
-          command: |
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+        #  when: on_fail
+        #  command: |
+         #   aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
           
 
 
@@ -34,91 +34,91 @@ jobs:
   # Exercise: Creating a Simple Workflow
   # Exercise: Environment Variables
   # Exercise: Reusable Job Code 
-  print_greetings:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - print_pipeline_id:
-          id: << pipeline.id >>
-      - run: echo HELLO
-      - run: echo WORLD
-      - run: echo $_env_name
+  #print_greetings:
+   # docker:
+     # - image: circleci/node:13.8.0
+    #steps:
+     # - print_pipeline_id:
+       #   id: << pipeline.id >>
+      #- run: echo HELLO
+      #- run: echo WORLD
+      #- run: echo $_env_name
 
   # Exercise: Sharing Files (Job names may have changed)
-  upload_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo "THIS IS A SAMPLE TEXT" > ~/output.txt  
-      - persist_to_workspace:
-          root: ~/
-          paths: 
-            - output.txt  
+  #upload_file:
+   # docker:
+     # - image: circleci/node:13.8.0
+    #steps:
+     # - run: echo "THIS IS A SAMPLE TEXT" > ~/output.txt  
+     # - persist_to_workspace:
+      #    root: ~/
+        #  paths: 
+         #   - output.txt  
 
-  download_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: cat ~/output.txt 
+  #download_file:
+   # docker:
+    #  - image: circleci/node:13.8.0
+    #steps:
+     # - attach_workspace:
+       #   at: ~/
+      #- run: cat ~/output.txt 
  
   # Exercise: Infrastructure Creation
   # Exercise - Rollback
-  create_infrastructure: 
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Create Cloudformation Stack
-          command: |
-            aws cloudformation deploy \
-              --template-file template.yml \
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-west-2
+  #create_infrastructure: 
+   # docker:
+    #  - image: amazon/aws-cli
+    #steps:
+    #  - checkout
+    #  - run:
+     #     name: Create Cloudformation Stack
+      #    command: |
+      #      aws cloudformation deploy \
+       #       --template-file template.yml \
+       #       --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+       #       --region us-west-2
       # Fail the job intentionally to simulate an error.
       # Uncomment the line below if you want to fail the current step
       # - run: return 1
-      - destroy_environment
+    
 
 
   # Exercise: Config and Deployment
-  configure_infrastructure: 
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["34:bd:5c:3d:33:dc:17:db:a7:48:1a:5e:52:e0:e3:be"] # You can get this ID in the section where you registered the SSH Key
-      - run:
-          name: Install dependencies
-          command: |
+  #configure_infrastructure: 
+    #docker:
+     # - image: python:3.7-alpine3.11
+    #steps:
+     # - checkout
+     # - add_ssh_keys:
+      #    fingerprints: ["34:bd:5c:3d:33:dc:17:db:a7:48:1a:5e:52:e0:e3:be"] # You can get this ID in the section where you registered the SSH Key
+     # - run:
+        #  name: Install dependencies
+        #  command: |
             # install the dependencies needed for your playbook
-            apk add --update ansible 
-      - run:
-          name: Configure server
-          command: |
-            ansible-playbook -i inventory.txt main4.yml
+         #   apk add --update ansible 
+     # - run:
+      #    name: Configure server
+       #   command: |
+         #   ansible-playbook -i inventory.txt main4.yml
 
   # Exercise: Smoke Testing
-  smoke_test:
-    docker:
-      - image: alpine:latest
-    steps:
-      - run: apk add --update curl
-      - run:
-          name: smoke test
-          command: |
-            URL="https://blog.udacity.com/"
+  #smoke_test:
+   # docker:
+    #  - image: alpine:latest
+   # steps:
+    #  - run: apk add --update curl
+     # - run:
+     #     name: smoke test
+      #    command: |
+       #     URL="https://blog.udacity.com/"
             # Test if website exists
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
-      - destroy_environment      
+        #    if curl -s --head ${URL} 
+         #   then
+         #     return 0
+          #  else
+          #    return 1
+          #  fi
+      #- destroy_environment      
   
   # Exercise: Promote to Production - Job 1 
   # Prerequisite: 
@@ -215,13 +215,13 @@ workflows:
     # Run the welcome/run job in its own container
     jobs:
       # - welcome/run
-      - print_greetings
-      - upload_file
-      - download_file:
-          requires:
-            - upload_file
-      - create_infrastructure
-      - configure_infrastructure
+     # - print_greetings
+      #- upload_file
+      #- download_file:
+       #   requires:
+         #   - upload_file
+      #- create_infrastructure
+     # - configure_infrastructure
       - create_and_deploy_front_end
       - promote_to_production:
           requires: 
